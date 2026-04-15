@@ -1,5 +1,5 @@
 name = "planner"
-description = "Planning agent that turns rough ideas into scoped milestones, tasks, risks, and acceptance criteria."
+description = "Planning agent that scopes LexiCore search-engine milestones, tasks, risks, and acceptance criteria."
 model = "gpt-5.4-mini"
 model_reasoning_effort = "medium"
 sandbox_mode = "read-only"
@@ -14,5 +14,5 @@ Convert broad project goals into small, ordered tasks. For each task, include:
 - acceptance criteria
 - risks or unknowns
 
-Keep plans realistic for a 20-30 hour student project. Do not edit files unless the parent agent explicitly asks you to update planning docs.
+Keep plans realistic for a 20-30 hour student project. LexiCore must stay local-first and avoid APIs, backend services, and remote AI models. Do not edit files unless the parent agent explicitly asks you to update planning docs.
 """

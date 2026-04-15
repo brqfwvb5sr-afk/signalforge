@@ -6,8 +6,8 @@ This repo uses project-scoped Codex custom agents in `.codex/agents/`.
 
 | Agent | Model | Writes code | Main job |
 | --- | --- | --- | --- |
-| `planner` | `gpt-5.4-mini` | No | Turns ideas into milestones and scoped tasks. |
-| `idea_scout` | `gpt-5.4-mini` | No | Finds creative features and level ideas. |
+| `planner` | `gpt-5.4-mini` | No | Turns search features into milestones and scoped tasks. |
+| `idea_scout` | `gpt-5.4-mini` | No | Finds creative local-first search and document ideas. |
 | `builder` | `gpt-5.4` | Yes | Implements the selected task. |
 | `debugger` | `gpt-5.4-mini` | No | Finds bugs and proposes fixes. |
 | `reviewer` | `gpt-5.4` | No | Reviews final changes for correctness and missing tests. |
@@ -25,7 +25,7 @@ Use subagents for this feature. Have planner turn the idea into a small implemen
 Use this when you want more creative options:
 
 ```text
-Spawn idea_scout and planner in parallel. idea_scout should propose 5 fun feature ideas. planner should estimate the smallest useful MVP for each. Wait for both, then recommend one option with acceptance criteria.
+Spawn idea_scout and planner in parallel. idea_scout should propose 5 local-first LexiCore feature ideas. planner should estimate the smallest useful MVP for each. Wait for both, then recommend one option with acceptance criteria.
 ```
 
 ## Debug Prompt

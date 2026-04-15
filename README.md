@@ -1,12 +1,21 @@
-# Project Workspace
+# LexiCore
 
-This workspace is prepared for a multi-agent Codex workflow.
+LexiCore is a local-first search engine for your own notes and documents.
 
-See:
+It runs in the browser and does not use an API, backend, or AI model. The search behavior is built from code in this repo: tokenization, an inverted index, TF-IDF ranking, snippet highlighting, tag suggestions, and document similarity.
 
-- `.codex/config.toml` for subagent limits.
-- `.codex/agents/` for custom agent roles.
-- `AGENTS.md` for repository-level instructions.
-- `docs/agent-workflow.md` for prompts you can reuse.
+## Run Locally
 
-The first implementation decision is whether to build the proposed Signalforge browser game or choose another project idea.
+```powershell
+node tests\searchEngine.test.js
+node server.js
+```
+
+Then open `http://127.0.0.1:8080`.
+
+## Project Docs
+
+- `.codex/config.toml` sets Codex subagent limits.
+- `.codex/agents/` contains the custom agent roles.
+- `AGENTS.md` contains repository-level instructions.
+- `docs/agent-workflow.md` contains reusable multi-agent prompts.

@@ -2,13 +2,13 @@
 
 ## Project Status
 
-This repository is prepared for a multi-agent Codex workflow. The concrete app or game can still be chosen, but the default working style is already set up for a 20-30 hour programming project.
+This repository is for LexiCore: a local-first browser search engine for personal notes and documents. It must run without APIs, remote AI models, or backend services. The interesting behavior should come from code in this repository.
 
 ## Agent Workflow
 
 - Use the main Codex thread as coordinator and decision maker.
 - Use `planner` for milestones, task breakdowns, acceptance criteria, and risk mapping.
-- Use `idea_scout` for creative feature ideas, level ideas, and scope expansion.
+- Use `idea_scout` for creative feature ideas, search workflows, and scope expansion.
 - Use `builder` for implementation. Only one implementation agent should edit code at a time.
 - Use `debugger` for bug hunts, reproduction steps, edge cases, and test suggestions.
 - Use `reviewer` after meaningful changes before merging or publishing.
@@ -26,8 +26,10 @@ This repository is prepared for a multi-agent Codex workflow. The concrete app o
 
 - Keep changes small and focused.
 - Follow existing project patterns once code exists.
-- Add tests for simulation logic, parsers, state machines, and user-visible bug fixes.
+- Add tests for tokenization, indexing, ranking, query parsing, similarity scoring, storage boundaries, and user-visible bug fixes.
 - Do not add secrets or API keys to the repo.
+- Do not add API integrations or remote model calls unless the user explicitly changes the project goal.
+- Prefer browser APIs and hand-written algorithms over dependencies.
 - For browser projects, prefer GitHub Pages-compatible deployment unless the project needs a backend.
 
 ## Review Guidelines

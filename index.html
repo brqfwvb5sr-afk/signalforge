@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>LexiCore</title>
+    <link rel="stylesheet" href="./src/styles.css">
+  </head>
+  <body>
+    <header class="topbar">
+      <div>
+        <p class="eyebrow">Local search lab</p>
+        <h1>LexiCore</h1>
+      </div>
+      <div class="topbar-actions">
+        <button id="newDocumentButton" type="button">New document</button>
+        <button id="exportButton" type="button" class="secondary">Export JSON</button>
+        <label class="import-button">
+          Import JSON
+          <input id="importInput" type="file" accept="application/json">
+        </label>
+      </div>
+    </header>
+
+    <main class="layout">
+      <section class="search-panel" aria-label="Search">
+        <label for="searchInput">Search your documents</label>
+        <div class="search-row">
+          <input id="searchInput" type="search" autocomplete="off" placeholder="Try: ranking, algorithm, project ideas">
+          <button id="clearSearchButton" type="button" class="secondary">Clear</button>
+        </div>
+        <p id="searchStats" class="muted">Ready.</p>
+        <div id="results" class="results" aria-live="polite"></div>
+      </section>
+
+      <section class="editor-panel" aria-label="Document editor">
+        <div class="editor-header">
+          <div>
+            <p class="eyebrow">Document</p>
+            <h2 id="editorTitle">Untitled</h2>
+          </div>
+          <button id="deleteDocumentButton" type="button" class="danger">Delete</button>
+        </div>
+
+        <label for="titleInput">Title</label>
+        <input id="titleInput" type="text" maxlength="120">
+
+        <label for="bodyInput">Text</label>
+        <textarea id="bodyInput" rows="16" spellcheck="true"></textarea>
+
+        <div class="insights">
+          <section aria-label="Suggested tags">
+            <h3>Suggested tags</h3>
+            <div id="tagList" class="pill-list"></div>
+          </section>
+          <section aria-label="Similar documents">
+            <h3>Similar documents</h3>
+            <div id="similarList" class="similar-list"></div>
+          </section>
+        </div>
+      </section>
+    </main>
+
+    <script type="module" src="./src/app.js"></script>
+  </body>
+</html>

@@ -1,0 +1,10 @@
+{
+  "name": "lexicore",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node tests/searchEngine.test.js",
+    "serve": "node server.js"
+  }
+}
