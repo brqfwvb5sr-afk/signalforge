@@ -14,6 +14,12 @@ Reason: It makes LexiCore feel smarter while staying entirely local and hand-wri
 Alternatives considered: Query filters, document graph, markdown import.
 Impact: The search engine now uses Levenshtein distance to match close misspellings.
 
+Date: 2026-04-15
+Decision: Add a small query language.
+Reason: Quoted phrases, negative terms, and `tag:` filters make LexiCore behave more like a real search engine without adding dependencies.
+Alternatives considered: Markdown import, document graph, benchmark panel.
+Impact: The parser now separates normal terms, exact phrases, required indexed terms, and exclusions.
+
 ## Pending
 
 - Deployment target.

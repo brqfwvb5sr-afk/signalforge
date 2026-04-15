@@ -5,6 +5,7 @@ import {
   createSnippet,
   findFuzzyTerms,
   levenshteinDistance,
+  parseQuery,
   search,
   similarDocuments,
   suggestTags
@@ -41,6 +42,36 @@ test("search ranks matching documents above unrelated documents", () => {
 
 test("search returns empty results for stopword-only queries", () => {
   assert.deepEqual(search(docs, "the and und das"), []);
+});
+
+test("parseQuery separates phrases, tag filters, exclusions, and normal terms", () => {
+  assert.deepEqual(parseQuery('"term frequency" tag:ranking -recipe search'), {
+    includeTerms: ["search"],
+    excludeTerms: ["recipe"],
+    tagTerms: ["ranking"],
+    phrases: ["term frequency"]
+  });
+});
+
+test("search requires quoted phrases", () => {
+  const results = search(docs, '"term frequency"');
+  assert.equal(results.length, 1);
+  assert.equal(results[0].doc.id, "a");
+});
+
+test("search excludes documents with negative terms", () => {
+  const results = search(docs, "notes -pasta");
+  assert.equal(results.length, 0);
+});
+
+test("search supports filter-only negative queries", () => {
+  const results = search(docs, "-recipe");
+  assert.deepEqual(results.map((result) => result.doc.id), ["a", "c"]);
+});
+
+test("search requires tag terms to exist in the document vector", () => {
+  const results = search(docs, "tag:index");
+  assert.deepEqual(results.map((result) => result.doc.id), ["c"]);
 });
 
 test("search finds close misspellings with fuzzy matching", () => {

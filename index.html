@@ -26,9 +26,10 @@
       <section class="search-panel" aria-label="Search">
         <label for="searchInput">Search your documents</label>
         <div class="search-row">
-          <input id="searchInput" type="search" autocomplete="off" placeholder="Try: ranking, algorithm, project ideas">
+          <input id="searchInput" type="search" autocomplete="off" placeholder='Try: "term frequency" tag:ranking -recipe'>
           <button id="clearSearchButton" type="button" class="secondary">Clear</button>
         </div>
+        <p class="hint">Use quotes for phrases, `-word` to exclude, and `tag:word` to require an important term.</p>
         <p id="searchStats" class="muted">Ready.</p>
         <div id="results" class="results" aria-live="polite"></div>
       </section>

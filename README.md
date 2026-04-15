@@ -4,6 +4,13 @@ LexiCore is a local-first search engine for your own notes and documents.
 
 It runs in the browser and does not use an API, backend, or AI model. The search behavior is built from code in this repo: tokenization, an inverted index, TF-IDF ranking, snippet highlighting, tag suggestions, and document similarity.
 
+## Search Syntax
+
+- `"term frequency"` requires an exact phrase.
+- `-recipe` excludes documents that contain a term.
+- `tag:ranking` requires an important indexed term.
+- Misspellings can still match through local Levenshtein fuzzy search.
+
 ## Run Locally
 
 ```powershell

@@ -146,6 +146,12 @@ textarea {
   color: var(--muted);
 }
 
+.hint {
+  margin: 0.55rem 0 0;
+  color: var(--muted);
+  font-size: 0.92rem;
+}
+
 .results {
   display: grid;
   gap: 0.55rem;

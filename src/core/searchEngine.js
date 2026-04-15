@@ -1,4 +1,4 @@
-import { escapeHtml, termFrequency, tokenize } from "./text.js";
+import { escapeHtml, normalizeSearchText, termFrequency, tokenize } from "./text.js";
 
 const TITLE_WEIGHT = 1.6;
 const BODY_WEIGHT = 1;
@@ -53,8 +53,9 @@ export function buildIndex(documents) {
 
 export function search(documents, query, options = {}) {
   const index = buildIndex(documents);
-  const queryTerms = tokenize(query);
-  if (queryTerms.length === 0) {
+  const parsedQuery = parseQuery(query);
+  const queryTerms = queryTermsForSearch(parsedQuery);
+  if (!hasExecutableQuery(parsedQuery, queryTerms)) {
     return [];
   }
 
@@ -63,6 +64,9 @@ export function search(documents, query, options = {}) {
     limit: options.fuzzyLimit || DEFAULT_FUZZY_LIMIT
   });
   if (expansion.counts.size === 0) {
+    if (queryTerms.length === 0 && parsedQuery.excludeTerms.length > 0) {
+      return filterOnlyResults(index, parsedQuery, options.limit || 25);
+    }
     return [];
   }
 
@@ -74,18 +78,78 @@ export function search(documents, query, options = {}) {
   return index.documents
     .map((doc) => {
       const vector = index.vectors.get(doc.id);
+      if (!passesQueryFilters(doc, vector, parsedQuery)) {
+        return null;
+      }
       const score = cosineSimilarity(queryVector, vector) + titleBoost(doc.title, expandedTermSet);
       return {
         doc,
         score,
         matchedTerms: matchedTerms(vector, expandedTermSet),
         fuzzyMatches: fuzzyMatchesForDocument(vector, expansion.fuzzyMatches),
-        snippet: createSnippet(doc, [...exactTermSet, ...expandedTermSet])
+        snippet: createSnippet(doc, [...parsedQuery.phrases, ...exactTermSet, ...expandedTermSet])
       };
     })
-    .filter((result) => result.score > 0)
+    .filter((result) => result && result.score > 0)
     .sort((a, b) => b.score - a.score || a.doc.title.localeCompare(b.doc.title))
     .slice(0, options.limit || 25);
+}
+
+function filterOnlyResults(index, parsedQuery, limit) {
+  return index.documents
+    .map((doc) => {
+      const vector = index.vectors.get(doc.id);
+      if (!passesQueryFilters(doc, vector, parsedQuery)) {
+        return null;
+      }
+      return {
+        doc,
+        score: 0,
+        matchedTerms: [],
+        fuzzyMatches: [],
+        snippet: createSnippet(doc, parsedQuery.excludeTerms)
+      };
+    })
+    .filter(Boolean)
+    .sort((a, b) => a.doc.title.localeCompare(b.doc.title))
+    .slice(0, limit);
+}
+
+export function parseQuery(query) {
+  const phrases = [];
+  let remainder = String(query ?? "").replace(/"([^"]+)"/g, (_, phrase) => {
+    const cleaned = normalizeSearchText(phrase);
+    if (cleaned) {
+      phrases.push(cleaned);
+    }
+    return " ";
+  });
+
+  const includeTerms = [];
+  const excludeTerms = [];
+  const tagTerms = [];
+
+  for (const part of remainder.split(/\s+/)) {
+    if (!part) {
+      continue;
+    }
+    if (part.startsWith("-") && part.length > 1) {
+      excludeTerms.push(...tokenize(part.slice(1)));
+      continue;
+    }
+    if (part.toLowerCase().startsWith("tag:") && part.length > 4) {
+      tagTerms.push(...tokenize(part.slice(4)));
+      continue;
+    }
+    includeTerms.push(...tokenize(part));
+  }
+
+  return {
+    includeTerms,
+    excludeTerms: [...new Set(excludeTerms)],
+    tagTerms: [...new Set(tagTerms)],
+    phrases: [...new Set(phrases)]
+  };
 }
 
 export function findFuzzyTerms(term, vocabulary, options = {}) {
@@ -184,9 +248,9 @@ export function cosineSimilarity(a, b) {
 
 export function createSnippet(document, queryTerms, radius = 80) {
   const source = `${document.title}\n${document.body}`;
-  const lower = source.toLowerCase();
+  const lower = normalizeSearchText(source);
   const firstMatch = queryTerms
-    .map((term) => lower.indexOf(term.toLowerCase()))
+    .map((term) => lower.indexOf(normalizeSearchText(term)))
     .filter((position) => position >= 0)
     .sort((a, b) => a - b)[0] ?? 0;
 
@@ -219,6 +283,38 @@ function tfidfVector(counts, idf) {
     vector.set(term, normalizedTf * (idf.get(term) || 1));
   }
   return vector;
+}
+
+function queryTermsForSearch(parsedQuery) {
+  return [
+    ...parsedQuery.includeTerms,
+    ...parsedQuery.tagTerms,
+    ...parsedQuery.phrases.flatMap((phrase) => tokenize(phrase))
+  ];
+}
+
+function hasExecutableQuery(parsedQuery, queryTerms) {
+  return queryTerms.length > 0 || parsedQuery.excludeTerms.length > 0 || parsedQuery.phrases.length > 0;
+}
+
+function passesQueryFilters(doc, vector, parsedQuery) {
+  const documentText = normalizeSearchText(`${doc.title} ${doc.body}`);
+  for (const excluded of parsedQuery.excludeTerms) {
+    if (vector.has(excluded) || documentText.includes(excluded)) {
+      return false;
+    }
+  }
+  for (const tag of parsedQuery.tagTerms) {
+    if (!vector.has(tag)) {
+      return false;
+    }
+  }
+  for (const phrase of parsedQuery.phrases) {
+    if (!documentText.includes(phrase)) {
+      return false;
+    }
+  }
+  return true;
 }
 
 function expandQueryTerms(index, queryTerms, options) {

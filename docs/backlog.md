@@ -13,10 +13,10 @@
 - Browser UI.
 - Search engine tests.
 - Fuzzy search with Levenshtein distance.
+- Query filters such as `tag:school`, quoted phrases, and negative terms.
 
 ## Ready To Refine
 
-- Query filters such as `tag:school`, quoted phrases, and negative terms.
 - Import and export as JSON.
 - Markdown file import.
 - Document graph based on similarity scores.

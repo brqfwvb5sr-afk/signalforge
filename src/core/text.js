@@ -33,6 +33,10 @@ export function termFrequency(tokens) {
   return counts;
 }
 
+export function normalizeSearchText(value) {
+  return normalizeText(value).replace(/[^a-z0-9]+/g, " ").trim();
+}
+
 export function escapeHtml(value) {
   return String(value ?? "")
     .replace(/&/g, "&amp;")
