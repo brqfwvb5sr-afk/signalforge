@@ -141,12 +141,16 @@ function renderResult(result) {
   const terms = result.matchedTerms.length
     ? `<span class="terms">${result.matchedTerms.join(", ")}</span>`
     : "";
+  const fuzzy = result.fuzzyMatches?.length
+    ? `<span class="terms">fuzzy: ${result.fuzzyMatches.map((match) => `${match.query} -> ${match.term}`).join(", ")}</span>`
+    : "";
 
   return `
     <button type="button" class="result${selected}" data-doc-id="${result.doc.id}">
       <span class="result-title">${escapeForDisplay(result.doc.title)} ${score}</span>
       <span class="snippet">${result.snippet}</span>
       ${terms}
+      ${fuzzy}
     </button>
   `;
 }

@@ -12,10 +12,10 @@
 - Local document storage.
 - Browser UI.
 - Search engine tests.
+- Fuzzy search with Levenshtein distance.
 
 ## Ready To Refine
 
-- Fuzzy search with Levenshtein distance.
 - Query filters such as `tag:school`, quoted phrases, and negative terms.
 - Import and export as JSON.
 - Markdown file import.

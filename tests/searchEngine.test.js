@@ -1,7 +1,14 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 
-import { createSnippet, search, similarDocuments, suggestTags } from "../src/core/searchEngine.js";
+import {
+  createSnippet,
+  findFuzzyTerms,
+  levenshteinDistance,
+  search,
+  similarDocuments,
+  suggestTags
+} from "../src/core/searchEngine.js";
 import { tokenize } from "../src/core/text.js";
 
 const docs = [
@@ -23,7 +30,7 @@ const docs = [
 ];
 
 test("tokenize normalizes umlauts, removes punctuation, and skips stopwords", () => {
-  assert.deepEqual(tokenize("Das grössere Projekt, mit Ranking!"), ["grossere", "projekt", "ranking"]);
+  assert.deepEqual(tokenize("Das gr\u00f6ssere Projekt, mit Ranking!"), ["grossere", "projekt", "ranking"]);
 });
 
 test("search ranks matching documents above unrelated documents", () => {
@@ -34,6 +41,25 @@ test("search ranks matching documents above unrelated documents", () => {
 
 test("search returns empty results for stopword-only queries", () => {
   assert.deepEqual(search(docs, "the and und das"), []);
+});
+
+test("search finds close misspellings with fuzzy matching", () => {
+  const results = search(docs, "algoritm");
+  assert.equal(results[0].doc.id, "a");
+  assert.deepEqual(results[0].fuzzyMatches, [{ query: "algoritm", term: "algorithms", distance: 2 }]);
+});
+
+test("search can disable fuzzy matching", () => {
+  assert.deepEqual(search(docs, "algoritm", { fuzzy: false }), []);
+});
+
+test("findFuzzyTerms limits matches by edit distance", () => {
+  const matches = findFuzzyTerms("serch", ["search", "salt", "ranking"]);
+  assert.deepEqual(matches, [{ term: "search", distance: 1 }]);
+});
+
+test("levenshteinDistance handles inserts, deletes, and replacements", () => {
+  assert.equal(levenshteinDistance("kitten", "sitting"), 3);
 });
 
 test("similarDocuments finds documents with shared search terms", () => {

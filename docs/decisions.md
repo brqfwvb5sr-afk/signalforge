@@ -8,6 +8,12 @@ Reason: It is creative, useful, large enough for a 20-30 hour project, and can b
 Alternatives considered: Browser game, API-based AI tool, local model tool.
 Impact: The MVP focuses on search algorithms, document storage, and a browser UI.
 
+Date: 2026-04-15
+Decision: Add Fuzzy Search as the first post-MVP feature.
+Reason: It makes LexiCore feel smarter while staying entirely local and hand-written.
+Alternatives considered: Query filters, document graph, markdown import.
+Impact: The search engine now uses Levenshtein distance to match close misspellings.
+
 ## Pending
 
 - Deployment target.

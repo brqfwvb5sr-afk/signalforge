@@ -14,7 +14,7 @@ export function normalizeText(value) {
     .toLowerCase()
     .normalize("NFKD")
     .replace(/[\u0300-\u036f]/g, "")
-    .replace(/ß/g, "ss");
+    .replace(/\u00df/g, "ss");
 }
 
 export function tokenize(value, options = {}) {
